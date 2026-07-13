@@ -236,6 +236,126 @@
     .device{ width:340px; height:736px; transform-origin:top center;}
     .screen{ border-radius:30px; }
   }
+
+  .screen img{ height:100%; object-fit:cover; object-position:top center; }
+
+  /* ===== App mode: looks/behaves like an installed app, no mockup chrome ===== */
+  body.app-mode{ background:#000; }
+  body.app-mode .stage{ padding:0; gap:0; min-height:100dvh; }
+  body.app-mode .top-label{ display:none; }
+  body.app-mode .legend{ display:none; }
+  body.app-mode .device-wrap{ width:100%; }
+  body.app-mode .device{
+    width:100vw; height:100dvh; height:100vh;
+    border-radius:0; padding:0; box-shadow:none; background:#000;
+  }
+  body.app-mode .screen{ border-radius:0; }
+  body.app-mode .notch{ display:none; }
+  body.app-mode .controls{
+    position:fixed; left:50%; bottom:18px; transform:translateX(-50%);
+    z-index:60; max-width:none;
+    background:rgba(10,9,64,.72);
+    border:1px solid rgba(255,255,255,.18);
+    padding:6px 8px;
+    box-shadow:0 10px 30px rgba(0,0,0,.4);
+  }
+  body.app-mode .controls .btn, body.app-mode .controls select{
+    padding:7px 10px; font-size:12px;
+  }
+  .fab-toggle{
+    position:fixed; right:16px; bottom:18px; z-index:61;
+    width:40px; height:40px; border-radius:50%;
+    background:rgba(10,9,64,.72);
+    border:1px solid rgba(255,255,255,.25);
+    color:#fff; font-size:18px; line-height:1;
+    display:none; align-items:center; justify-content:center;
+    cursor:pointer;
+  }
+  body.app-mode .fab-toggle{ display:flex; }
+  body.app-mode .controls.collapsed{ display:none; }
+
+  /* ===== Login screen (custom, not from source images) ===== */
+  .custom-screen{
+    position:absolute; inset:0; display:none;
+    flex-direction:column;
+    background:var(--navy);
+    color:#fff;
+  }
+  .custom-screen.active{ display:flex; }
+  .login-top{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 18px 0;
+  }
+  .login-top .icon-btn{
+    width:34px; height:34px; border-radius:50%;
+    background:rgba(255,255,255,.12); border:none; color:#fff;
+    font-size:16px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .login-top .brand-mark{
+    width:30px; height:30px; border-radius:8px;
+    background:var(--mint); color:var(--navy);
+    display:flex; align-items:center; justify-content:center;
+    font-weight:800; font-size:15px;
+  }
+  .login-hero{ padding:26px 26px 10px; }
+  .login-hero h2{ margin:0 0 8px; font-size:24px; font-weight:800; }
+  .login-hero p{ margin:0; font-size:13.5px; color:#c7caea; line-height:1.5; }
+  .login-card{
+    margin:18px 16px 16px; padding:22px 20px 20px;
+    background:var(--card); border-radius:22px; color:var(--ink);
+    flex:1;
+    display:flex; flex-direction:column;
+  }
+  .login-card label{
+    font-size:12px; font-weight:700; color:var(--muted);
+    text-transform:uppercase; letter-spacing:.04em;
+    margin:14px 0 6px;
+  }
+  .login-card label:first-child{ margin-top:0; }
+  .login-card input{
+    width:100%; background:var(--bg); border:2px solid transparent;
+    border-radius:12px; padding:13px 14px; font-size:14.5px;
+    color:var(--ink); outline:none;
+    transition:border-color .15s ease;
+  }
+  .login-card input:focus{ border-color:var(--violet); }
+  .pw-wrap{ position:relative; }
+  .pw-wrap input{ padding-right:44px; }
+  .pw-wrap button{
+    position:absolute; right:6px; top:50%; transform:translateY(-50%);
+    width:32px; height:32px; border:none; background:transparent;
+    cursor:pointer; font-size:16px; color:var(--muted);
+  }
+  .login-error{
+    min-height:18px; color:#e0454f; font-size:12.5px; font-weight:600;
+    margin-top:8px;
+  }
+  .login-error.shake{ animation:shake .3s ease; }
+  @keyframes shake{
+    0%,100%{ transform:translateX(0); }
+    25%{ transform:translateX(-6px); }
+    75%{ transform:translateX(6px); }
+  }
+  .login-submit{
+    margin-top:14px; width:100%; padding:14px; border:none;
+    border-radius:12px; background:var(--navy); color:#fff;
+    font-size:15px; font-weight:700; cursor:pointer;
+    transition:background .15s ease, transform .1s ease;
+  }
+  .login-submit:hover{ background:var(--violet); }
+  .login-submit:active{ transform:scale(.98); }
+  .login-submit:disabled{ opacity:.7; cursor:default; }
+  .login-link{
+    display:block; text-align:center; margin-top:16px;
+    font-size:13px; color:var(--violet); font-weight:600;
+    text-decoration:none; cursor:pointer;
+  }
+  .login-foot{
+    text-align:center; font-size:12px; color:var(--muted);
+    margin-top:auto; padding-top:16px;
+  }
+  .login-foot b{ color:var(--ink); cursor:pointer; }
 </style>
 </head>
 <body>
@@ -252,16 +372,18 @@
       <div class="screen" id="screen">
         <div class="notch"></div>
         <img id="screenImg" src="" alt="tela do app">
+        <div id="customScreen" class="custom-screen"></div>
         <div id="hotspots"></div>
       </div>
     </div>
   </div>
 
-  <div class="controls">
+  <div class="controls" id="controls">
     <button class="btn ghost" id="backBtn">← Voltar</button>
     <button class="btn" id="homeBtn">🏠 Início</button>
     <select class="jump" id="jumpSelect"></select>
   </div>
+  <button class="fab-toggle" id="fabToggle" title="Controles do protótipo">⋯</button>
 
   <div class="legend">Fluxo: Splash → Deslogado <span class="flow-badge out">visitante</span> → Login → Logado <span class="flow-badge in">assinante</span></div>
 </div>
@@ -279,7 +401,7 @@ const screens = {
   home_out: {
     img:'home_out_0', title:'Home — Deslogado', desc:'Visitante navegando sem login. Toque no menu ou em "Login".',
     hotspots:[
-      {x:62,y:2.4,w:20,h:4.2,label:'Login',go:'menu_out_login'},
+      {x:62,y:2.4,w:20,h:4.2,label:'Login',go:'login_form'},
       {x:88,y:2.4,w:10,h:4.2,label:'Menu',go:'menu_out'},
       {x:5,y:47.5,w:90,h:29,label:'Assine para ver ofertas',go:'menu_out_gate'},
       {x:5,y:77,w:65,h:6.3,label:'Assinar',go:'menu_out_gate'},
@@ -294,7 +416,7 @@ const screens = {
     img:'menu_out_0', title:'Menu — Deslogado', desc:'Menu lateral do visitante, com opção de login.',
     hotspots:[
       {x:2,y:5,w:12,h:5,label:'Fechar',go:'home_out'},
-      {x:30,y:81.5,w:60,h:6.5,label:'Login',go:'login_transition'},
+      {x:30,y:81.5,w:60,h:6.5,label:'Login',go:'login_form'},
       {x:30,y:96,w:60,h:4,label:'Encerrar sessão',go:'home_out'},
     ]
   },
@@ -302,15 +424,19 @@ const screens = {
     img:'menu_out_1', title:'Login necessário', desc:'Aviso pedindo login para acessar benefícios do clube.',
     hotspots:[
       {x:2,y:5,w:12,h:5,label:'Fechar',go:'home_out'},
-      {x:11,y:47,w:78,h:6,label:'Fazer login',go:'login_transition'},
+      {x:11,y:47,w:78,h:6,label:'Fazer login',go:'login_form'},
     ]
   },
   menu_out_gate: {
     img:'menu_out_1', title:'Login necessário', desc:'É preciso estar logado para garantir os benefícios do Clube Realbem.',
     hotspots:[
       {x:2,y:5,w:12,h:5,label:'Fechar',go:'home_out'},
-      {x:11,y:47,w:78,h:6,label:'Fazer login',go:'login_transition'},
+      {x:11,y:47,w:78,h:6,label:'Fazer login',go:'login_form'},
     ]
+  },
+  login_form: {
+    custom:'login', title:'Entrar', desc:'Comportamento simulado — não faz parte do material original. Informe usuário e senha (qualquer valor) para continuar.',
+    hotspots:[]
   },
   login_transition: {
     img:'menu_out_1', title:'Entrando...', desc:'Simulando autenticação do usuário.', auto:'home_in', autoDelay:650,
@@ -394,7 +520,7 @@ const screenOrder = ['splash','home_out','menu_out','menu_out_login','home_in','
 const niceNames = {
   splash:'Splash', home_out:'Home (deslogado)', menu_out:'Menu (deslogado)',
   menu_out_login:'Aviso de login', menu_out_gate:'Aviso de login (gate)',
-  login_transition:'Entrando…', home_in:'Home (logado)', menu_in:'Menu (logado)',
+  login_form:'Tela de login', login_transition:'Entrando…', home_in:'Home (logado)', menu_in:'Menu (logado)',
   logout_transition:'Saindo…', conquistas:'Conquistas', beneficios:'Benefícios / Bem Plus', ofertas:'Ofertas'
 };
 
@@ -402,6 +528,7 @@ let history = [];
 let current = 'splash';
 
 const screenImg = document.getElementById('screenImg');
+const customScreenEl = document.getElementById('customScreen');
 const hotspotsEl = document.getElementById('hotspots');
 const titleEl = document.getElementById('screenTitle');
 const descEl = document.getElementById('screenDesc');
@@ -417,28 +544,103 @@ function showToast(msg){
   toastTimer = setTimeout(()=>toastEl.classList.remove('show'), 1900);
 }
 
+/* ---------- Custom (non-screenshot) screens ---------- */
+function buildLoginScreen(){
+  customScreenEl.innerHTML = `
+    <div class="login-top">
+      <button class="icon-btn" id="loginBack">←</button>
+      <div class="brand-mark">B</div>
+      <div style="width:34px"></div>
+    </div>
+    <div class="login-hero">
+      <h2>Bem-vindo de volta</h2>
+      <p>Entre para acessar seus benefícios do Clube Realbem.</p>
+    </div>
+    <div class="login-card">
+      <label>E-mail ou CPF</label>
+      <input type="text" id="loginUser" placeholder="seuemail@exemplo.com" autocomplete="username">
+      <label>Senha</label>
+      <div class="pw-wrap">
+        <input type="password" id="loginPass" placeholder="Digite sua senha" autocomplete="current-password">
+        <button type="button" id="togglePw" aria-label="Mostrar senha">👁</button>
+      </div>
+      <div class="login-error" id="loginError"></div>
+      <button class="login-submit" id="loginSubmit">Entrar</button>
+      <a class="login-link" id="forgotPw">Esqueci minha senha</a>
+      <div class="login-foot">Não tem conta? <b id="goSignup">Cadastre-se</b></div>
+    </div>
+  `;
+  const userEl = customScreenEl.querySelector('#loginUser');
+  const passEl = customScreenEl.querySelector('#loginPass');
+  const errEl = customScreenEl.querySelector('#loginError');
+  const submitBtn = customScreenEl.querySelector('#loginSubmit');
+
+  customScreenEl.querySelector('#loginBack').addEventListener('click', ()=>{
+    if(history.length){ render(history.pop(), false); } else { render('home_out'); }
+  });
+  customScreenEl.querySelector('#togglePw').addEventListener('click', (e)=>{
+    passEl.type = passEl.type === 'password' ? 'text' : 'password';
+    e.target.textContent = passEl.type === 'password' ? '👁' : '🙈';
+  });
+  customScreenEl.querySelector('#forgotPw').addEventListener('click', ()=>{
+    showToast('Recuperação de senha não faz parte deste protótipo.');
+  });
+  customScreenEl.querySelector('#goSignup').addEventListener('click', ()=>{
+    showToast('Cadastro não faz parte deste protótipo.');
+  });
+
+  function attemptLogin(){
+    const user = userEl.value.trim();
+    const pass = passEl.value.trim();
+    if(!user || !pass){
+      errEl.textContent = 'Preencha usuário e senha para continuar.';
+      errEl.classList.remove('shake'); void errEl.offsetWidth; errEl.classList.add('shake');
+      return;
+    }
+    errEl.textContent = '';
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Entrando…';
+    setTimeout(()=>{ render('home_in'); }, 700);
+  }
+  submitBtn.addEventListener('click', attemptLogin);
+  passEl.addEventListener('keydown', (e)=>{ if(e.key==='Enter') attemptLogin(); });
+}
+
+const customBuilders = { login: buildLoginScreen };
+
 function render(name, push=true){
   if(autoTimer){ clearTimeout(autoTimer); autoTimer=null; }
   const s = screens[name];
   if(!s) return;
   if(push && current !== name){ history.push(current); }
   current = name;
-  screenImg.src = ASSETS[s.img];
   titleEl.textContent = s.title;
   descEl.textContent = s.desc;
   hotspotsEl.innerHTML = '';
-  s.hotspots.forEach(h=>{
-    const d = document.createElement('div');
-    d.className='hotspot';
-    d.style.left = h.x+'%';
-    d.style.top = h.y+'%';
-    d.style.width = h.w+'%';
-    d.style.height = h.h+'%';
-    d.setAttribute('data-label', h.label);
-    d.addEventListener('click', ()=>handleGo(h.go));
-    hotspotsEl.appendChild(d);
-  });
-  jumpSelect.value = screenOrder.includes(name) ? name : (niceNames[name]?name:'home_out');
+
+  if(s.custom){
+    screenImg.style.display = 'none';
+    customScreenEl.classList.add('active');
+    customBuilders[s.custom] && customBuilders[s.custom]();
+  } else {
+    customScreenEl.classList.remove('active');
+    customScreenEl.innerHTML = '';
+    screenImg.style.display = 'block';
+    screenImg.src = ASSETS[s.img];
+    s.hotspots.forEach(h=>{
+      const d = document.createElement('div');
+      d.className='hotspot';
+      d.style.left = h.x+'%';
+      d.style.top = h.y+'%';
+      d.style.width = h.w+'%';
+      d.style.height = h.h+'%';
+      d.setAttribute('data-label', h.label);
+      d.addEventListener('click', ()=>handleGo(h.go));
+      hotspotsEl.appendChild(d);
+    });
+  }
+
+  jumpSelect.value = niceNames[name] ? name : 'home_out';
   if(s.auto){
     autoTimer = setTimeout(()=>render(s.auto), s.autoDelay||600);
   }
@@ -474,6 +676,29 @@ Object.keys(niceNames).forEach(key=>{
   jumpSelect.appendChild(opt);
 });
 jumpSelect.addEventListener('change', (e)=>render(e.target.value));
+
+/* ---------- App mode: fullbleed on mobile / when installed as PWA ---------- */
+const controlsEl = document.getElementById('controls');
+const fabToggle = document.getElementById('fabToggle');
+
+function applyMode(){
+  const isNarrow = window.innerWidth <= 480;
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  document.body.classList.toggle('app-mode', isNarrow || isStandalone);
+  if(!(isNarrow || isStandalone)){
+    controlsEl.classList.remove('collapsed');
+  }
+}
+window.addEventListener('resize', applyMode);
+applyMode();
+
+fabToggle.addEventListener('click', ()=>{
+  controlsEl.classList.toggle('collapsed');
+});
+// start collapsed in app-mode so it truly looks like an app on load
+if(document.body.classList.contains('app-mode')){
+  controlsEl.classList.add('collapsed');
+}
 
 // init
 render('splash', false);
